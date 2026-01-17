@@ -1,24 +1,24 @@
-// 请从开者中心获取 "Client-end (Target Recognition) URL"，
-// 格式如：https://af0c1ca3b........0601c74.cn1.crs.easyar.com:8443
+// Please get "Client-end (Target Recognition) URL" from Developer Center,
+// Format example: https://af0c1ca3b........0601c74.cn1.crs.easyar.com:8443
 const app = new App('Client-end (Target Recognition) URL');
-// 如果使用自定义方法获取token
+// If using custom method to get token
 // app.setToken({
-//     'crsAppId': '', // 云别库的CRS AppId
-//     'token': '' // APIKey+APISecret生成token
+//     'crsAppId': '', // CRS AppId of the cloud recognition database
+//     'token': '' // Token generated from APIKey+APISecret
 // });
-// 如果使用EasyAR提供的集成环境
+// If using EasyAR's integrated environment
 app.useEasyAr();
-// 识别成功后的回调
+// Callback after successful recognition
 app.callback = (msg) => {
     console.info(msg);
     const setting = {
         video: '//staticfile-cdn.sightp.com/sightp/webar/webardemo-final.mp4',
     };
-    // 可以将 setting 作为meta上传到EasyAR的云识别，使用方法如下:
+    // You can upload setting as meta to EasyAR cloud recognition, usage as follows:
     // const setting = JSON.parse(window.atob(msg.target.meta));
     playVideo(setting);
 };
-// 在手机上可能不会自动播放
+// May not auto-play on mobile devices
 function playVideo(setting) {
     let video = document.querySelector('#easyARVideo');
     if (video === null) {
@@ -33,8 +33,8 @@ function playVideo(setting) {
     video.setAttribute('src', setting.video);
     video.play().then(() => {
     }).catch((err) => {
-        // 需要使用点击事件播放。
-        console.info('播放视频失败');
+        // Need to use click event to play.
+        console.info('Failed to play video');
         console.info(err);
     });
 }

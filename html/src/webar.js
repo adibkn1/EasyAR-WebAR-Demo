@@ -95,7 +95,7 @@ class WebAR {
         this.container.appendChild(this.videoElement);
     }
     /**
-     * 创建canvas，截取摄像头图片时使用
+     * Create canvas, used when capturing camera images
      */
     initCanvas() {
         this.canvasElement = document.createElement('canvas');
@@ -105,19 +105,19 @@ class WebAR {
         // document.body.appendChild(this.canvasElement);
     }
     /**
-     * 识别
+     * Start recognition
      * @param callback
      */
     startRecognize(callback) {
         this.timer = window.setInterval(() => {
-            // 等待上一次识别结果
+            // Wait for previous recognition result
             if (this.isRecognizing) {
                 return;
             }
             this.isRecognizing = true;
-            // 从摄像头中抓取一张图片
+            // Capture an image from the camera
             const image = { image: this.captureVideo(), notracking: true, appId: this.token.crsAppId };
-            // 发送到服务器识别
+            // Send to server for recognition
             this.httpPost(image).then((msg) => {
                 this.stopRecognize();
                 callback(msg);
@@ -128,7 +128,7 @@ class WebAR {
         }, this.interval);
     }
     /**
-     * 停止识别
+     * Stop recognition
      */
     stopRecognize() {
         this.isRecognizing = false;

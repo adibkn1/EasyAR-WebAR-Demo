@@ -1,32 +1,32 @@
 /**
- * WebAR基础类
- * 摄像头设置参数请查看： https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints
- * 如果打开摄像头后，播放视频有卡顿，请尝试设置 frameRate，height与width
+ * WebAR base class
+ * For camera settings parameters, please refer to: https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints
+ * If video playback stutters after opening the camera, try setting frameRate, height and width
  */
 class WebAR {
-    // 识别间隔(毫秒)
+    // Recognition interval (milliseconds)
     private readonly interval: number = 1000;
-    // 识别服务地址
+    // Recognition service address
     private readonly recognizeUrl: string;
-    // 认证token及云别库AppId
+    // Authentication token and Cloud Recognition Service AppId
     private readonly token: any = { crsAppId: '', token: '' };
     private readonly container: HTMLElement;
-    // 识别计时器
+    // Recognition timer
     private timer: number;
     private isRecognizing: boolean = false;
 
-    // canvas元素
+    // Canvas element
     private canvasElement: HTMLCanvasElement;
     private canvasContext: CanvasRenderingContext2D | null;
-    // 视频元素
+    // Video element
     private videoElement: HTMLVideoElement;
 
     /**
-     * 初始化Web AR
-     * @param interval 识别间隔(毫秒)
-     * @param recognizeUrl 识别服务地址
-     * @param token 用token认证识别
-     * @param container webAR运行需要的容器
+     * Initialize Web AR
+     * @param interval Recognition interval (milliseconds)
+     * @param recognizeUrl Recognition service address
+     * @param token Token for authentication
+     * @param container Container required for webAR to run
      */
     constructor(interval: number, recognizeUrl: string, token: any, container: HTMLElement) {
         this.interval = interval;
@@ -49,13 +49,13 @@ class WebAR {
     }
 
     /**
-     * 打开摄像头
-     * 摄像头设置参数请查看： https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints
+     * Open camera
+     * For camera settings parameters, please refer to: https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints
      * @returns {Promise<T>}
      * @param constraints
      */
     public openCamera(constraints: MediaStreamConstraints): Promise<any> {
-        // 如果已打开摄像头，则需要先关闭。
+        // If camera is already open, close it first.
         this.closeCamera();
 
         return new Promise((resolve, reject) => {
@@ -64,7 +64,7 @@ class WebAR {
                 this.videoElement.srcObject = stream;
                 this.videoElement.play().then(() => {
                 }).catch(err => {
-                    console.error(`摄像头视频绑定失败\n${err}`);
+                    console.error(`Failed to bind camera video\n${err}`);
                     reject(err);
                 });
 
@@ -75,14 +75,14 @@ class WebAR {
                     };
                     console.info(`camera size ${JSON.stringify(cameraSize)}`);
 
-                    // 简单处理横/竖屏
+                    // Simple handling of landscape/portrait orientation
                     if (window.innerWidth < window.innerHeight) {
-                        // 竖屏
+                        // Portrait
                         if (cameraSize.height < window.innerHeight) {
                             this.videoElement.setAttribute('height', `${window.innerHeight}px`);
                         }
                     } else {
-                        // 横屏
+                        // Landscape
                         if (cameraSize.width < window.innerWidth) {
                             this.videoElement.setAttribute('width', `${window.innerWidth}px`);
                         }
@@ -96,7 +96,7 @@ class WebAR {
     }
 
     /**
-     * 截取摄像头图片
+     * Capture camera image
      * @returns {string}
      */
     public captureVideo(): string {
@@ -105,7 +105,7 @@ class WebAR {
     }
 
     /**
-     * 创建视频详情元素，播放摄像头视频流
+     * Create video element to play camera video stream
      */
     private initVideo(): void {
         this.videoElement = document.createElement('video');
@@ -114,7 +114,7 @@ class WebAR {
     }
 
     /**
-     * 创建canvas，截取摄像头图片时使用
+     * Create canvas, used when capturing camera images
      */
     private initCanvas(): void {
         this.canvasElement = document.createElement('canvas');
@@ -125,21 +125,21 @@ class WebAR {
     }
 
     /**
-     * 识别
+     * Start recognition
      * @param callback
      */
     public startRecognize(callback: (msg) => void): void {
         this.timer = window.setInterval(() => {
-            // 等待上一次识别结果
+            // Wait for previous recognition result
             if (this.isRecognizing) {
                 return
             }
 
             this.isRecognizing = true;
 
-            // 从摄像头中抓取一张图片
+            // Capture an image from the camera
             const image = { image: this.captureVideo(), notracking: true, appId: this.token.crsAppId };
-            // 发送到服务器识别
+            // Send to server for recognition
             this.httpPost(image).then((msg) => {
                 this.stopRecognize();
 
@@ -152,7 +152,7 @@ class WebAR {
     }
 
     /**
-     * 停止识别
+     * Stop recognition
      */
     public stopRecognize(): void {
         this.isRecognizing = false;
