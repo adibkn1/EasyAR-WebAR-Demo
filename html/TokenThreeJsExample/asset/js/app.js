@@ -1,6 +1,6 @@
 // Please get "Client-end (Target Recognition) URL" from Developer Center,
 // Format example: https://af0c1ca3b........0601c74.cn1.crs.easyar.com:8443
-const app = new App('Client-end (Target Recognition) URL');
+const app = new App('https://40af1db18fc9a81c9fc4d85675f86e0b.nal.crs.easyar.com:8443');
 // If using custom method to get token
 // app.setToken({
 //     'crsAppId': '', // CRS AppId of the cloud recognition database

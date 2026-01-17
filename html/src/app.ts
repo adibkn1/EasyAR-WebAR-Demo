@@ -42,7 +42,9 @@ class App {
             if (data.statusCode === 0) {
                 this.setToken(data.result);
             } else {
-                throw new Error(data.result || 'Failed to get token');
+                // Show the actual error message from the server
+                const errorMsg = data.msg || data.message || JSON.stringify(data.result) || 'Failed to get token';
+                throw new Error(errorMsg);
             }
         }).catch(err => {
             console.error('Failed to get token:', err);
