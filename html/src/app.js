@@ -26,13 +26,20 @@ class App {
         // expire: validity period (seconds)
         fetch('/webar/token?expire=86400', {
             method: 'POST',
-        }).then(res => res.json()).then(data => {
-            return data.statusCode === 0 ? Promise.resolve(data) : Promise.reject(data.result);
-        }).catch(err => {
-            console.info(err);
-            alert(`Failed to get token\n${err}`);
+        }).then(res => {
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            return res.json();
         }).then(data => {
-            this.setToken(data.result);
+            if (data.statusCode === 0) {
+                this.setToken(data.result);
+            } else {
+                throw new Error(data.result || 'Failed to get token');
+            }
+        }).catch(err => {
+            console.error('Failed to get token:', err);
+            alert(`Failed to get token\n${err.message || err}\n\nMake sure the EasyAR-WebAR server is running.`);
         });
     }
     listCamera() {
